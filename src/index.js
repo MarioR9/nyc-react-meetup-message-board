@@ -1,11 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import io from 'socket.io-client'
-
+var current = ["Steve","Bill"]
 class App extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { messages: [] }
+    this.state = { messages: [],
+                  username:"" }
   }
 
   componentDidMount () {
@@ -13,6 +14,7 @@ class App extends React.Component {
     this.socket.on('message', message => {
       this.setState({ messages: [message, ...this.state.messages] })
     })
+    
   }
 
   handleSubmit = event => {
@@ -20,12 +22,16 @@ class App extends React.Component {
     if (event.keyCode === 13 && body) {
       const message = {
         body,
-        from: 'Me'
+        from: this.state.username
       }
       this.setState({ messages: [message, ...this.state.messages] })
       this.socket.emit('message', body)
+      this.socket.emit('message', from)
       event.target.value = ''
     }
+  }
+  HandleUsername=(e)=>{
+  this.setState({username: e.currentTarget.value})
   }
 
   render () {
@@ -35,8 +41,9 @@ class App extends React.Component {
     })
     return (
       <div>
-        <h1>ez.ngrok.io</h1>
-        <h1>+18622562970</h1>
+        
+        <h1>Enter messages</h1>
+        <input type='text' placeholder='Enter UserName' onChange={(e)=>{this.HandleUsername(e)}} />
         <input type='text' placeholder='Enter a message...' onKeyUp={this.handleSubmit} />
         {messages}
       </div>

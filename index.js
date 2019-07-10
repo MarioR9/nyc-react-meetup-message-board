@@ -14,28 +14,14 @@ app.use(express.static(__dirname + '/public'))
 app.use(webpackDevMiddleware(webpack(webpackConfig)))
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.post('/', (req, res) => {
-  const { Body, From, MediaUrl0 } = req.body
-  const message = {
-    body: Body,
-    from: From.slice(8),
-    img: MediaUrl0
-  }
-  io.emit('message', message)
-  res.send(`
-           <Response>
-            <Message>Thanks for texting!</Message>
-           </Response>
-           `)
-})
-
 io.on('connection', socket => {
   socket.on('message', body => {
-    socket.broadcast.emit('message', {
-      body,
-      from: socket.id.slice(8)
+      socket.broadcast.emit('message', {
+      body, from,
+      from: from
     })
   })
+  
 })
 
 server.listen(3000)
